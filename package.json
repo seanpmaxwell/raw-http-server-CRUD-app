@@ -1,0 +1,28 @@
+{
+  "name": "raw-http-server-crud-app",
+  "version": "1.0.0",
+  "description": "A simple nodejs webserver CRUD app that uses the http module and no frameworks",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seanpmaxwell/raw-http-server-CRUD-app.git"
+  },
+  "keywords": [
+    "raw",
+    "http",
+    "server",
+    "crud",
+    "app",
+    "node",
+    "module"
+  ],
+  "author": "sean maxwell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/seanpmaxwell/raw-http-server-CRUD-app/issues"
+  },
+  "homepage": "https://github.com/seanpmaxwell/raw-http-server-CRUD-app#readme"
+}
