@@ -97,7 +97,6 @@ const server = http.createServer((req, res) => {
           res.writeHead(404, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ message: "User not found" }));
         }
-
         res.writeHead(201, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(currentUsers));
       } catch (err) {
