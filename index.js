@@ -24,6 +24,7 @@ const server = http.createServer((req, res) => {
   if (req.method === 'GET' && req.url === '/users') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     const users = db.get('users');
+    console.log('users fetched');
     res.end(JSON.stringify(users));
 
   // Add user
@@ -37,6 +38,7 @@ const server = http.createServer((req, res) => {
         const incomingData = JSON.parse(body),
           currentUsers = db.get('users');
         currentUsers?.push(incomingData);
+        console.log('user added');
         res.writeHead(201, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(currentUsers));
       } catch (err) {
@@ -67,6 +69,7 @@ const server = http.createServer((req, res) => {
           res.writeHead(404, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ message: "User not found" }));
         }
+        console.log('user updated');
         res.writeHead(201, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(currentUsers));
       } catch (err) {
@@ -76,35 +79,25 @@ const server = http.createServer((req, res) => {
     });
 
   // Delete a user
-  } else if (req.method === 'DELETE' && req.url === '/users') {
-    let body = '';
-    req.on('data', chunk => {
-      body += chunk;
-    });
-    req.on('end', () => {
-      try {
-        const incomingData = JSON.parse(body),
-          currentUsers = db.get('users') ?? [];
-        let found = false;
-        for (let i = 0; i < currentUsers.length; i++) {
-          if (currentUsers[i].id === incomingData.id) {
-            currentUsers.splice(i, 1);
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          res.writeHead(404, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ message: "User not found" }));
-        }
-        res.writeHead(201, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(currentUsers));
-      } catch (err) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ message: "Bad Request" }));
+  } else if (req.method === 'DELETE' && req.url?.startsWith('/users')) {
+    const arr = req.url?.split('/') ?? [],
+      id = Number(arr[arr?.length - 1]),
+      currentUsers = db.get('users') ?? [];
+    let found = false;
+    for (let i = 0; i < currentUsers.length; i++) {
+      if (currentUsers[i].id === id) {
+        currentUsers.splice(i, 1);
+        found = true;
+        break;
       }
-    });
-
+    }
+    if (!found) {
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ message: "User not found" }));
+    }
+    console.log('user deleted');
+    res.writeHead(201, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(currentUsers));
   // Not found error
   } else {
     res.writeHead(404, { 'Content-Type': 'application/json' });
