@@ -37,7 +37,7 @@ const server = http.createServer((req, res) => {
         const incomingData = JSON.parse(body),
           currentUsers = db.get('users');
         currentUsers?.push(incomingData);
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.writeHead(201, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(currentUsers));
       } catch (err) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -67,7 +67,7 @@ const server = http.createServer((req, res) => {
           res.writeHead(404, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ message: "User not found" }));
         }
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.writeHead(201, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(currentUsers));
       } catch (err) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -85,11 +85,10 @@ const server = http.createServer((req, res) => {
       try {
         const incomingData = JSON.parse(body),
           currentUsers = db.get('users') ?? [];
-        let index = -1,
-          found = false;
+        let found = false;
         for (let i = 0; i < currentUsers.length; i++) {
           if (currentUsers[i].id === incomingData.id) {
-            index = i;
+            currentUsers.splice(i, 1);
             found = true;
             break;
           }
@@ -98,8 +97,8 @@ const server = http.createServer((req, res) => {
           res.writeHead(404, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ message: "User not found" }));
         }
-        currentUsers.splice(index, 1);
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+
+        res.writeHead(201, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(currentUsers));
       } catch (err) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
