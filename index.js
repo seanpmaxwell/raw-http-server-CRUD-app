@@ -1,6 +1,14 @@
 const http = require('http');
 
 
+// **** Variables **** //
+
+const HEADERS = {
+  'Content-Type': 'application/json',
+  'Connection': 'close',
+};
+
+
 // **** Setup Mock database **** //
 
 const db = new Map([
@@ -22,7 +30,7 @@ const server = http.createServer((req, res) => {
 
   // Fetch users
   if (req.method === 'GET' && req.url === '/users') {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.writeHead(200, HEADERS);
     const users = db.get('users');
     console.log('users fetched');
     res.end(JSON.stringify(users));
@@ -39,10 +47,10 @@ const server = http.createServer((req, res) => {
           currentUsers = db.get('users');
         currentUsers?.push(incomingData);
         console.log('user added');
-        res.writeHead(201, { 'Content-Type': 'application/json' });
+        res.writeHead(201, HEADERS);
         res.end(JSON.stringify(currentUsers));
       } catch (err) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.writeHead(400, HEADERS);
         res.end(JSON.stringify({ message: "Bad Request" }));
       }
     });
@@ -66,14 +74,15 @@ const server = http.createServer((req, res) => {
           }
         }
         if (!found) {
-          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.writeHead(404, HEADERS);
           res.end(JSON.stringify({ message: "User not found" }));
+          return;
         }
         console.log('user updated');
-        res.writeHead(201, { 'Content-Type': 'application/json' });
+        res.writeHead(201, HEADERS);
         res.end(JSON.stringify(currentUsers));
       } catch (err) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.writeHead(400, HEADERS);
         res.end(JSON.stringify({ message: "Bad Request" }));
       }
     });
@@ -92,15 +101,16 @@ const server = http.createServer((req, res) => {
       }
     }
     if (!found) {
-      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.writeHead(404, HEADERS);
       res.end(JSON.stringify({ message: "User not found" }));
+      return;
     }
     console.log('user deleted');
-    res.writeHead(201, { 'Content-Type': 'application/json' });
+    res.writeHead(201, HEADERS);
     res.end(JSON.stringify(currentUsers));
   // Not found error
   } else {
-    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.writeHead(404, HEADERS);
     res.end(JSON.stringify({ message: 'Route not found' }));
   }
 });
@@ -116,14 +126,14 @@ server.listen(PORT, () => {
 
 // **** Close server when process exits **** //
 
-process.on('SIGTERM', async () => {
+process.on('SIGTERM', () => {
   console.log('SIGTERM received')
   server.close(() => {
     console.log('server closed successfully');
   });
 });
 
-process.on('SIGINT', async () => {
+process.on('SIGINT', () => {
   console.log('SIGINT received')
   server.close(() => {
     console.log('server closed successfully');
